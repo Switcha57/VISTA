@@ -1,4 +1,6 @@
 .vscode
+assets/train.zip
+data/
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,dotenv,python,windows,intellij,visualstudio,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,dotenv,python,windows,intellij,visualstudio,visualstudiocode

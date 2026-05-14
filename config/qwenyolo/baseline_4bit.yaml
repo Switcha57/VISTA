@@ -1,0 +1,45 @@
+input:
+  video: data/train/20251120/DJI_20251120172410_0001_S.mp4
+  start_frame: 0
+  end_frame: 300          # ~10s @ 30 fps for the first smoke test; remove for full clip
+
+output:
+  dir: ./out/baseline_4bit
+
+device: cuda:0
+seed: 42
+
+yolo:
+  model: yolo12m.pt        # ~20M params, comfortable headroom alongside Qwen-8B 4-bit
+  iou_match_threshold: 0.3
+  conf: 0.25
+
+qwen:
+  model_id: unsloth/Qwen3-VL-8B-Instruct-unsloth-bnb-4bit
+  every_n_frames: 30
+  num_frames: 1
+  max_new_tokens: 1024
+  image_target_size: 1024
+  system_prompt: >
+    You are an operator supervising a drone operation over an accident scene. Your task is to detect and label all relevant objects in the images. Focus on the following:
+
+    1. Vehicles:
+      - Identify and classify all vehicles, including cars, trucks, motorcycles, bicycles only if they are involved in the accident.
+      - Distinguish between:
+        * Vehicles involved in the accident
+        * Emergency or helping vehicles
+
+    2. People:
+      - Detect all people present in the scene.
+      - Describe their actions and status, including but not limited to: injured, hurt, standing, sitting, walking, running, helping others, calling for help, etc.
+      - Include this information in the label.
+
+    Output format:
+    - Return a valid JSON array with bounding boxes for all detected elements in the form:
+      `[{"bbox_2d": [xmin, ymin, xmax, ymax], "label": "detailed description"}, ...]`
+    - Example valid response:
+      `[{"bbox_2d": [10, 30, 20, 60], "label": "car involved in accident"}, {"bbox_2d": [40, 15, 52, 27], "label": "person injured, sitting"}]`
+    - Ensure each object is labeled with a precise description reflecting its type and status.
+  user_prompt:
+
+merge_method: update

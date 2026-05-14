@@ -19,9 +19,6 @@ from vista.utils import set_seed, image_to_base64, resize_image, log, IGNORE_CAT
 from vista.utils import get_emergency_level
 
 
-os.environ["HF_HOME"] = "/media/nvme/pasquale/HF"
-
-
 # ============================================================
 # Geometry
 # ============================================================

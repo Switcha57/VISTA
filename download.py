@@ -1,7 +1,3 @@
-import os
-
-os.environ["HF_HOME"] = "$SCRATCH"
-
 from transformers import Qwen3VLMoeForConditionalGeneration, AutoProcessor
 
 model_id = "Qwen/Qwen3-VL-8B-Instruct"
