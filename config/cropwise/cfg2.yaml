@@ -1,0 +1,26 @@
+pipeline: cropwise_moondream
+
+output:
+  dir: ./out/cropwise_cfg2
+  min_track_frames: 15
+
+device: cuda:0
+seed: 42
+
+detector:
+  weights: out/rtdetr_vistacrash/weights/best.pt
+  conf: 0.30
+  tracker: config/trackers/bytetrack_long.yaml
+
+moondream:
+  model_id: vikhyatk/moondream2
+  prompt: >
+    Look only at the object in the center of this image. In 5 words or fewer,
+    label its state: is it crashed, damaged, on fire, a person (running, sitting,
+    helping, injured), or an emergency vehicle? Ignore the background.
+  max_new_tokens: 24
+
+caption:
+  stride: 30
+  padding: 0.05          # tighter crop — less background for moondream to hallucinate
+  recaption_every: 3     # re-caption every 3 stride calls (~90 frames) so labels stay fresh

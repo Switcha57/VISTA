@@ -1,7 +1,8 @@
 .vscode
 assets/train.zip
 data/
-
+notes/
+submission_smoke*/
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,dotenv,python,windows,intellij,visualstudio,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,dotenv,python,windows,intellij,visualstudio,visualstudiocode
 
@@ -783,3 +784,8 @@ FodyWeavers.xsd
 *.pth
 *.ts
 Towards_Real_Time_Drone_Vision_for_Road_Safety-1.pdf
+submission_smoke/videos/DJI_20251120172410_0001_S.raw.mp4
+submit.py
+.gitignore
+submission/videos/DJI_20251120172410_0001_S.raw.mp4
+vista/pipeline/qwen_yolo.py

@@ -1,0 +1,41 @@
+pipeline: cropwise_moondream
+
+output:
+  dir: ./out/cropwise_cfg4
+  min_track_frames: 15
+  merge_gap_frames: 30
+  merge_dist_ratio: 0.5
+
+device: cuda:0
+seed: 42
+
+detector:
+  weights: out/rtdetr_vistacrash/weights/best.pt
+  conf: 0.30
+  tracker: config/trackers/bytetrack_long.yaml
+  imgsz: 1280                # match training resolution — helps detect distant persons
+
+moondream:
+  model_id: vikhyatk/moondream2
+  # fallback prompt used when category has no specific entry below
+  prompt: >
+    Briefly describe the condition and action of the main subject in this image.
+    Keep it very short, like a label (e.g., crashed car, injured person sitting, paramedic helping).
+  max_new_tokens: 48
+  # category-specific prompts — override the fallback per detected class
+  prompts:
+    car: >
+      Look only at the vehicle in the center. Is it crashed, damaged, on fire, or intact?
+      Give a short label like "crashed car", "damaged car", "car on fire", or "car".
+    person: >
+      Look only at the person in the center. What are they doing?
+      Give a short label like "injured person sitting", "person running", "paramedic helping",
+      "person standing", or "person being rescued".
+    emergency_vehicle: >
+      What type of emergency vehicle is this?
+      Give a short label like "ambulance", "fire truck", or "police car".
+
+caption:
+  stride: 30
+  padding: 0.05
+  recaption_every: 3

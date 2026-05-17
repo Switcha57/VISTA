@@ -110,9 +110,20 @@ class QwenYoloPipeline(VistaPipeline):
             except Exception:
                 parsed = []
 
+            # Qwen3-VL emits bboxes in normalised 0-1000 coords; scale to pixels.
+            scale_qwen = not str(getattr(self.qwen, "cfg", {}).get("qwen", {}).get("model_id", "")).startswith("Qwen/Qwen2.5-VL")
+            W, H = frame.size
+
             # match each Qwen detection to the best-overlap YOLO track
             for det in parsed:
-                qb    = det.get("bbox_2d", [])
+                if not isinstance(det, dict):
+                    continue
+                qb = det.get("bbox_2d", [])
+                if not (isinstance(qb, (list, tuple)) and len(qb) == 4):
+                    continue
+                if scale_qwen:
+                    qb = [qb[0] * W / 1000, qb[1] * H / 1000,
+                          qb[2] * W / 1000, qb[3] * H / 1000]
                 label = det.get("label", "unknown")
                 best_tid, best_iou = None, 0.0
                 for tid, tr in active.items():

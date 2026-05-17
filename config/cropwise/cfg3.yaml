@@ -1,0 +1,27 @@
+pipeline: cropwise_moondream
+
+output:
+  dir: ./out/cropwise_cfg3
+  min_track_frames: 15
+  merge_gap_frames: 30      # merge tracks whose gap is ≤ 30 frames apart
+  merge_dist_ratio: 0.5     # center distance / bbox-diagonal threshold
+
+device: cuda:0
+seed: 42
+
+detector:
+  weights: out/rtdetr_vistacrash/weights/best.pt
+  conf: 0.30
+  tracker: config/trackers/bytetrack_long.yaml
+
+moondream:
+  model_id: vikhyatk/moondream2
+  prompt: >
+    Briefly describe the condition and action of the main subject in this image.
+    Keep it very short, like a label (e.g., crashed car, injured person sitting, paramedic helping).
+  max_new_tokens: 48
+
+caption:
+  stride: 30
+  padding: 0.05          # tighter crop vs cfg1 (was 0.10)
+  recaption_every: 3     # refresh caption every ~90 frames

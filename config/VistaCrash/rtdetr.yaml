@@ -1,0 +1,19 @@
+model:
+  name: rtdetr
+  model: rtdetr-l.pt
+
+classes: ["crashed car", "person", "car"]
+
+train:
+  data: data/VistaCrash/data.yaml
+  epochs: 50
+  imgsz: 1280
+  batch: 4
+  device: 0
+  patience: 10
+  workers: 4
+
+val:
+  data: data/VistaCrash/data.yaml
+  split: test
+  imgsz: 1280

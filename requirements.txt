@@ -1,0 +1,22 @@
+# Runtime dependencies for the VISTA submission pipeline
+# (CropwiseMoondreamPipeline: RT-DETR detector + Moondream caption per crop).
+
+# Core
+torch~=2.8.0
+torchvision>=0.23.0
+numpy
+Pillow
+pyyaml
+opencv-python>=4.12
+
+# Detection + tracking
+ultralytics>=8.4.27
+
+# Captioner (Moondream HF model)
+transformers[torch]~=4.57.1
+accelerate>=1.0
+einops
+pyvips>=3.1
+
+# I/O
+huggingface-hub>=0.36

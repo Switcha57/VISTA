@@ -1,0 +1,27 @@
+pipeline: cropwise_moondream
+
+output:
+  dir: ./out/cropwise_cfg1
+  min_track_frames: 15    # drop tracks shorter than this from predictions_tracks.csv
+
+device: cuda:0
+seed: 42
+
+detector:
+  # Path to RT-DETR checkpoint fine-tuned on VistaCrash.
+  # Produced by:  uv run python main.py run --parameters config/VistaCrash/rtdetr.yaml
+  weights: out/rtdetr_vistacrash/weights/best.pt
+  conf: 0.25
+  tracker: config/trackers/bytetrack_long.yaml
+
+moondream:
+  model_id: vikhyatk/moondream2
+  prompt: >
+    Briefly describe the condition and action of the main subject in this image. 
+    Keep it very short, like a label (e.g., crashed car, injured person sitting, paramedic helping).
+  max_new_tokens: 48
+
+caption:
+  stride: 30          # call moondream every N frames
+  padding: 0.10       # 10% bbox padding around each crop
+  recaption_every: null   # null = caption only when missing; integer N = re-caption every N stride calls
