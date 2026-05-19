@@ -1,0 +1,43 @@
+pipeline: cropwise_moondream
+
+output:
+  dir: ./out/cropwise_cfg11
+  min_track_frames: 15
+  merge_gap_frames: 30
+  merge_dist_ratio: 0.5
+
+device: cuda:0
+seed: 42
+
+# Identical to cfg10 (ensemble + BoT-SORT + GMC + ReID) except the tracker
+# gates that prevented ReID from acting across long occlusion gaps are
+# opened. Single-variable A/B vs cfg10, isolating the contribution of
+# long-gap re-identification.
+detector:
+  conf: null
+  tracker: config/trackers/botsort_drone_reid_longgap.yaml
+  ensemble:
+    nms_iou: 0.5
+    detectors:
+      - weights: yolo12x.pt
+        type: yolo
+        classes: ["person"]
+        conf: 0.30
+        imgsz: 1920
+      - weights: out/rtdetr_vistacrash/weights/best.pt
+        type: rtdetr
+        classes: ["crashed car", "car"]
+        conf: 0.30
+        imgsz: 1280
+
+moondream:
+  model_id: vikhyatk/moondream2
+  prompt: >
+    Briefly describe the condition and action of the main subject in this image.
+    Keep it very short, like a label (e.g., crashed car, injured person sitting, paramedic helping).
+  max_new_tokens: 48
+
+caption:
+  stride: 30
+  padding: 0.05
+  recaption_every: 3

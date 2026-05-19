@@ -56,11 +56,23 @@ def xyxy_to_xywh(xyxy: np.ndarray) -> np.ndarray:
     return xywh
 
 
-def load_bytetracker(cfg_path: str):
-    """Load an ultralytics BYTETracker from a YAML config path."""
+def load_tracker(cfg_path: str, frame_rate: int = 30):
+    """Load an ultralytics tracker (ByteTrack or BoT-SORT) from a YAML path.
+
+    Dispatch is by ``tracker_type`` inside the yaml.
+    """
     import yaml
-    from ultralytics.trackers.byte_tracker import BYTETracker
     from ultralytics.utils import IterableSimpleNamespace
     with open(cfg_path) as f:
-        args = IterableSimpleNamespace(**yaml.safe_load(f))
-    return BYTETracker(args, frame_rate=30)
+        raw = yaml.safe_load(f)
+    args = IterableSimpleNamespace(**raw)
+    ttype = raw.get("tracker_type", "bytetrack").lower()
+    if ttype == "botsort":
+        from ultralytics.trackers.bot_sort import BOTSORT
+        return BOTSORT(args, frame_rate=frame_rate)
+    from ultralytics.trackers.byte_tracker import BYTETracker
+    return BYTETracker(args, frame_rate=frame_rate)
+
+
+# Backwards-compatible alias (older code paths)
+load_bytetracker = load_tracker

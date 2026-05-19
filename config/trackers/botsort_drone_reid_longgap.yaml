@@ -1,0 +1,29 @@
+# BoT-SORT for drone footage, ReID tuned for long-gap re-identification.
+#
+# Single-variable change vs botsort_drone_reid.yaml: open the gates that
+# prevented ReID from acting across long occlusions.
+#   * track_buffer: 180 -> 1500    (keep lost tracks alive ~50s instead of ~6s)
+#   * proximity_thresh: 0.5 -> 0.1 (let ReID compare tracks/dets with low IoU)
+#
+# Rationale: on the smoke video, a person tracked early as ID 1 disappeared
+# (drone moved away) and returned ~700 frames later as ID 63 — far past the
+# 180-frame deletion window AND with near-zero IoU to the original bbox. Both
+# constraints structurally blocked ReID from ever comparing the two
+# observations. appearance_thresh stays at 0.25 (real cosine-similarity floor)
+# to prevent merging visually-distinct objects.
+
+tracker_type: botsort
+
+track_high_thresh: 0.45
+track_low_thresh:  0.10
+new_track_thresh:  0.50
+track_buffer:    1500
+match_thresh:      0.65
+fuse_score:        false
+
+gmc_method:        sparseOptFlow
+
+proximity_thresh:  0.1
+appearance_thresh: 0.25
+with_reid:         true
+model:             yolo11s-cls.pt

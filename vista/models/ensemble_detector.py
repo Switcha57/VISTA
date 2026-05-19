@@ -22,7 +22,7 @@ import torch
 from torchvision.ops import nms
 
 from vista.models._track_io import (
-    DetInput, ResultsLike, load_bytetracker, xyxy_to_xywh,
+    DetInput, ResultsLike, load_tracker, xyxy_to_xywh,
 )
 
 
@@ -119,7 +119,7 @@ class EnsembleDetector:
 
     def _ensure_tracker(self, cfg_path: str):
         if self._tracker is None or self._tracker_cfg_path != cfg_path:
-            self._tracker = load_bytetracker(cfg_path)
+            self._tracker = load_tracker(cfg_path)
             self._tracker_cfg_path = cfg_path
 
     def _reset_tracker(self):

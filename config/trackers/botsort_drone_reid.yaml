@@ -1,0 +1,30 @@
+# BoT-SORT for drone footage with appearance-based ReID enabled.
+#
+# Single-variable change vs botsort_drone.yaml:
+#   * with_reid: false -> true
+#   * model: auto -> yolo11s-cls.pt    (small classification model as feature encoder)
+#
+# Rationale: motion compensation alone helped lifetime by ~11% but did not
+# reduce ID switches dramatically. ReID adds appearance similarity (cosine on
+# YOLO backbone features) as a second matching signal, which should let lost
+# tracks be re-associated by appearance after motion-only matching fails
+# (long occlusions, large scale changes from drone descent/ascent).
+
+tracker_type: botsort
+
+track_high_thresh: 0.45
+track_low_thresh:  0.10
+new_track_thresh:  0.50
+track_buffer:     180
+match_thresh:      0.65
+fuse_score:        false
+
+gmc_method:        sparseOptFlow
+
+# ReID: enabled. proximity_thresh gates *which* track-detection pairs are
+# candidates for appearance comparison (must be ≥ this IoU). appearance_thresh
+# is the cosine-similarity floor for accepting an appearance match.
+proximity_thresh:  0.5
+appearance_thresh: 0.25
+with_reid:         true
+model:             yolo11s-cls.pt

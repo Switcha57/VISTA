@@ -1,0 +1,29 @@
+# BoT-SORT tuned for drone (UAV) footage on the calibrated ensemble detector.
+#
+# Single-variable change vs bytetrack_long.yaml:
+#   * tracker_type: bytetrack -> botsort   (adds global motion compensation)
+#   * gmc_method:  sparseOptFlow            (compensate drone yaw/translation)
+#   * match_thresh: 0.80 -> 0.65            (drone motion still leaves residual drift)
+#   * fuse_score:  true -> false            (avoid penalizing small conf wobble)
+#   * track_buffer: 90  -> 180              (carry tracks longer through occlusions/tilts)
+#   * thresholds otherwise mirror bytetrack_long for a fair A/B vs cfg8.
+
+tracker_type: botsort
+
+track_high_thresh: 0.45
+track_low_thresh:  0.10
+new_track_thresh:  0.50
+track_buffer:     180
+match_thresh:      0.65
+fuse_score:        false
+
+# BoT-SORT specifics — sparse optical flow is fast and effective for the
+# translation/yaw-dominated motion of a hovering or panning drone.
+gmc_method:        sparseOptFlow
+
+# ReID off — keep the experiment a single-variable change (motion only, no
+# appearance model added). Worth trying next if ID switches persist.
+proximity_thresh:  0.5
+appearance_thresh: 0.25
+with_reid:         false
+model:             auto
